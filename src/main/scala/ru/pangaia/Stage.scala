@@ -14,6 +14,7 @@ class Stage(width: Int, height: Int)
   var snake: mutable.MutableList[Coord] = new mutable.MutableList[Coord]()
   var isRectangle = true
   var level: LevellingController = new LevellingController(1)
+  var score: Int = 0
 
   def init: Unit =
   {
@@ -91,6 +92,13 @@ class Stage(width: Int, height: Int)
     val tail = hexes(tailCoord)
     if (hexes.keySet.contains(nextHexCoord) && hexes(nextHexCoord).isPassable)
     {
+      val nxt = hexes(nextHexCoord).contents.filter(_.isInstanceOf[GreenApple]).toList
+      if (nxt.nonEmpty)
+      {
+        this.score += nxt(0).asInstanceOf[GreenApple].bonusPts
+        println(score)
+        removeFromHex(nextHexCoord._1, nextHexCoord._2, nxt(0).asInstanceOf[GreenApple])
+      }
       removeFromHex(tailCoord._1, tailCoord._2, SnakeBody())
       removeFromHex(headCoord._1, headCoord._2, SnakeHead())
       putToHex(headCoord._1, headCoord._2, SnakeBody())
@@ -162,7 +170,9 @@ class LevellingController(l: Int)
   def nextLevel: Boolean =
   {
     levelBoundaries.contains(turnIndex)
+//    turnIndex % 100 == 0
   }
+
 
   def takeTurn(): Unit =
   {
@@ -176,6 +186,7 @@ class LevellingController(l: Int)
       Config.INITIAL_TIMER_DELAY/l
     }
     else Config.MIN_TIMER_DELAY
+//    500
   }
 }
 

@@ -73,6 +73,13 @@ case class SnakeHead() extends SnakeChunk
 
 case class Sprite(x:Int, y:Int, img:Image,w:Int,h:Int,visible:Boolean)
 
+case class GreenApple(bonusPts: Integer) extends GameObject
+{
+  override val zIndex: Int = 2
+  override val passable: Boolean = true
+  override val spriteFile: String = Config.RESOURCE_PATH + "apple_green_28x32.png"
+}
+
 class Snake
 {
   val chain:mutable.MutableList[SnakeChunk] = new mutable.MutableList[SnakeChunk]()

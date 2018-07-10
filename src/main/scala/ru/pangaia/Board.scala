@@ -24,6 +24,7 @@ class Board extends JPanel with ActionListener
     stage.addRoom(2, 6, 8, 6)
     stage.addRoom(12, 14, 4, 4)
     stage.addSimpleSnake((2,(Config.maxZ-1)/2),(1,(Config.maxZ-1)/2),(0,(Config.maxZ-1)/2))
+    stage.hexes((19,11)).addContent(GreenApple(100))
   }
   init()
   repaint()
@@ -83,12 +84,12 @@ class Board extends JPanel with ActionListener
 
     lev.takeTurn()
     stage.moveSnake()
-    if (nextLevel)
-    {
-      lev.level0+=1
-      println("level: " + lev.level0)
-      timer.restartWithDelay(lev.getDelayForLevel(lev.level0))
-    }
+//    if (nextLevel)
+//    {
+//      lev.level0+=1
+//      println("level: " + lev.level0)
+//      timer.restartWithDelay(lev.getDelayForLevel(lev.level0))
+//    }
     repaint()
 
   }
