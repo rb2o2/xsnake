@@ -1,7 +1,7 @@
 package ru.pangaia
 
 import scala.collection.mutable
-import scala.util.Sorting
+import scala.util.{Random, Sorting}
 
 /**
   * Created by oneuro on 03.02.17.
@@ -92,20 +92,37 @@ class Stage(width: Int, height: Int)
     val tail = hexes(tailCoord)
     if (hexes.keySet.contains(nextHexCoord) && hexes(nextHexCoord).isPassable)
     {
-      val nxt = hexes(nextHexCoord).contents.filter(_.isInstanceOf[GreenApple]).toList
+      val nxt = hexes(nextHexCoord).contents.filter(_.isInstanceOf[Fruit]).toList
+      var ate = 0
       if (nxt.nonEmpty)
       {
-        this.score += nxt(0).asInstanceOf[GreenApple].bonusPts
+        this.score += nxt(0).asInstanceOf[Fruit].bonusPts
         println(score)
-        removeFromHex(nextHexCoord._1, nextHexCoord._2, nxt(0).asInstanceOf[GreenApple])
+        removeFromHex(nextHexCoord._1, nextHexCoord._2, nxt(0).asInstanceOf[Fruit])
+        eatFruit
+        ate += 1
       }
-      removeFromHex(tailCoord._1, tailCoord._2, SnakeBody())
+      if (ate == 0)
+        removeFromHex(tailCoord._1, tailCoord._2, SnakeBody())
       removeFromHex(headCoord._1, headCoord._2, SnakeHead())
       putToHex(headCoord._1, headCoord._2, SnakeBody())
       putToHex(nextHexCoord._1, nextHexCoord._2, SnakeHead().withDirection(dir))
       snake = nextHexCoord +=: snake
-      snake = snake.dropRight(1)
+      if (ate == 0)
+        snake = snake.dropRight(1)
+      ate -= 1
     }
+  }
+  def eatFruit: Unit = {
+    val bonuses = List(GreenApple(500), Orange(1000))
+    val bonus = Random.shuffle(bonuses).head
+    var s = -100
+    var z = -100
+      while(hexes.get((s,z)) == None || hexes((s,z)).contents.size > 2) {
+        s = Random.nextInt(Config.maxS)
+        z = Random.nextInt(Config.maxZ)
+      }
+    putToHex(s,z,bonus)
   }
 
   def addRoom(top: Int, left: Int, width: Int, height: Int): Unit =
