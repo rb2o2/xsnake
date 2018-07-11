@@ -124,6 +124,17 @@ class Stage(width: Int, height: Int)
       }
     putToHex(s,z,bonus)
   }
+  def eatFruit: Unit = {
+    val bonuses = List(GreenApple(100), Orange(200))
+    val bonus = Random.shuffle(bonuses).head
+    var s = -100
+    var z = -100
+      while(hexes.get((s,z)) == None || hexes((s,z)).contents.size > 2) {
+        s = Random.nextInt(Config.maxS)
+        z = Random.nextInt(Config.maxZ)
+      }
+    putToHex(s,z,bonus)
+  }
 
   def addRoom(top: Int, left: Int, width: Int, height: Int): Unit =
   {
