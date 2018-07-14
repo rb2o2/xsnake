@@ -35,10 +35,26 @@ case class Wall() extends GameObject
   override val spriteFile: String = Config.RESOURCE_PATH + "wall_28x32.png"
 }
 
+case class WallCracked1() extends GameObject
+{
+  override val zIndex: Int = 900
+  override val passable: Boolean = false
+  override def toString: String = super.toString
+
+  override val spriteFile: String = Config.RESOURCE_PATH +  "wall_cracked1_28x32.png"
+}
+
+case class WallCracked2() extends GameObject
+{
+  override val zIndex: Int = 800
+  override val passable: Boolean = false
+  override val spriteFile: String = Config.RESOURCE_PATH +  "wall_cracked2_28x32.png"
+}
+
 case class Void() extends GameObject
 {
   override val zIndex: Int = -1
-  override val passable: Boolean = false
+  override val passable: Boolean = true
 
   override def toString: String = "_ "
 

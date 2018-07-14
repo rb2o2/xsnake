@@ -23,7 +23,7 @@ case class Hex(x: Int, y: Int) extends PlaneVec
 {
   def isPassable: Boolean =
   {
-    contents.contains(Floor()) && !contents.contains(SnakeBody()) && !contents.contains(Wall())
+    contents.forall(i => i.passable)//contains(Floor()) && !contents.contains(SnakeBody()) && !contents.contains(Wall())
   }
 
   var contents: mutable.MutableList[GameObject] = mutable.MutableList[GameObject](Void())

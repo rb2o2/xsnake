@@ -112,29 +112,42 @@ class Stage(width: Int, height: Int)
         snake = snake.dropRight(1)
       ate -= 1
     }
+    else if (!hexes(nextHexCoord).isPassable && hexes.contains(nextHexCoord)) {
+      if (hexes(nextHexCoord).contents.exists(_.isInstanceOf[Wall]))
+      {
+        snake.dropRight(1)
+        var wall = hexes(nextHexCoord).contents.find(_.isInstanceOf[Wall]).get
+        hexes(nextHexCoord).contents = hexes(nextHexCoord).contents.filterNot(_.isInstanceOf[Wall])
+        hexes(nextHexCoord).addContent(new WallCracked1())
+      }
+      else if (hexes(nextHexCoord).contents.exists(_.isInstanceOf[WallCracked1]))
+      {
+        snake.dropRight(1)
+        val crWall = new WallCracked2()
+        hexes(nextHexCoord).contents = hexes(nextHexCoord).contents.filterNot(_.isInstanceOf[WallCracked1])
+        hexes(nextHexCoord).addContent(new WallCracked2)
+
+      }
+    }
+
+
   }
-  def eatFruit: Unit = {
+  def looseTail() : Unit = {
+
+  }
+
+  def eatFruit(): Unit = {
     val bonuses = List(GreenApple(500), Orange(1000))
     val bonus = Random.shuffle(bonuses).head
     var s = -100
     var z = -100
-      while(hexes.get((s,z)) == None || hexes((s,z)).contents.size > 2) {
-        s = Random.nextInt(Config.maxS)
-        z = Random.nextInt(Config.maxZ)
-      }
+    while(hexes.get((s,z)) == None || hexes((s,z)).contents.size > 2) {
+      s = Random.nextInt(Config.maxS)
+      z = Random.nextInt(Config.maxZ)
+    }
     putToHex(s,z,bonus)
   }
-  def eatFruit: Unit = {
-    val bonuses = List(GreenApple(100), Orange(200))
-    val bonus = Random.shuffle(bonuses).head
-    var s = -100
-    var z = -100
-      while(hexes.get((s,z)) == None || hexes((s,z)).contents.size > 2) {
-        s = Random.nextInt(Config.maxS)
-        z = Random.nextInt(Config.maxZ)
-      }
-    putToHex(s,z,bonus)
-  }
+
 
   def addRoom(top: Int, left: Int, width: Int, height: Int): Unit =
   {
@@ -198,7 +211,7 @@ class LevellingController(l: Int)
   def nextLevel: Boolean =
   {
     levelBoundaries.contains(turnIndex)
-//    turnIndex % 100 == 0
+    //    turnIndex % 100 == 0
   }
 
 
@@ -214,7 +227,7 @@ class LevellingController(l: Int)
       Config.INITIAL_TIMER_DELAY/l
     }
     else Config.MIN_TIMER_DELAY
-//    500
+    //    500
   }
 }
 
