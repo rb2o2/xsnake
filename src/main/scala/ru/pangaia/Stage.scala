@@ -85,11 +85,10 @@ class Stage(width: Int, height: Int)
   def moveSnake(): Unit =
   {
     val tailCoord = snake.last
-    val headCoord = snake(0)
+    val headCoord = snake.head
     val snakeHead = hexes(headCoord).contents.find(p=>p.isInstanceOf[SnakeHead]).get.asInstanceOf[SnakeHead]
     val dir = snakeHead.direction
     val nextHexCoord = Utils.getNeighboringCoords(headCoord,dir)
-    val tail = hexes(tailCoord)
     if (hexes.keySet.contains(nextHexCoord) && hexes(nextHexCoord).isPassable)
     {
       val nxt = hexes(nextHexCoord).contents.filter(_.isInstanceOf[Fruit]).toList
@@ -99,33 +98,75 @@ class Stage(width: Int, height: Int)
         this.score += nxt(0).asInstanceOf[Fruit].bonusPts
         println(score)
         removeFromHex(nextHexCoord._1, nextHexCoord._2, nxt(0).asInstanceOf[Fruit])
+        putToHex(nextHexCoord._1, nextHexCoord._2, SnakeHead().withDirection(dir))
+        removeFromHex(headCoord._1, headCoord._2, SnakeHead())
+        putToHex(headCoord._1, headCoord._2, SnakeBody())
+        snake = nextHexCoord +=: snake
         eatFruit
         ate += 1
       }
-      if (ate == 0)
+      if (nxt.isEmpty && tailCoord != headCoord)
+      {
         removeFromHex(tailCoord._1, tailCoord._2, SnakeBody())
-      removeFromHex(headCoord._1, headCoord._2, SnakeHead())
-      putToHex(headCoord._1, headCoord._2, SnakeBody())
-      putToHex(nextHexCoord._1, nextHexCoord._2, SnakeHead().withDirection(dir))
-      snake = nextHexCoord +=: snake
-      if (ate == 0)
         snake = snake.dropRight(1)
+        removeFromHex(headCoord._1, headCoord._2, SnakeHead())
+        putToHex(headCoord._1, headCoord._2, SnakeBody())
+        putToHex(nextHexCoord._1, nextHexCoord._2, SnakeHead().withDirection(dir))
+        snake = nextHexCoord +=: snake
+      } else if (tailCoord == headCoord && nxt.isEmpty)
+      {
+        putToHex(nextHexCoord._1, nextHexCoord._2, SnakeHead().withDirection(dir))
+        removeFromHex(headCoord._1, headCoord._2, SnakeHead())
+        snake = snake.dropRight(1)
+        snake = nextHexCoord +=: snake
+//        snake = nextHexCoord +=: snake
+//        snake.dropRight(1)
+      }
+//      if (tailCoord != headCoord) {
+//        putToHex(headCoord._1, headCoord._2, SnakeBody())
+//        putToHex(nextHexCoord._1, nextHexCoord._2, SnakeHead().withDirection(dir))
+//      }
+//        snake = nextHexCoord +=: snake
       ate -= 1
     }
-    else if (!hexes(nextHexCoord).isPassable && hexes.contains(nextHexCoord)) {
+    else if (hexes.contains(nextHexCoord) && !hexes(nextHexCoord).isPassable) {
       if (hexes(nextHexCoord).contents.exists(_.isInstanceOf[Wall]))
       {
-        snake.dropRight(1)
+        if (tailCoord != headCoord)
+        {
+          val tail = snake.last
+          removeFromHex(tail._1,tail._2, SnakeBody())
+          snake = snake.dropRight(1)
+        }
         var wall = hexes(nextHexCoord).contents.find(_.isInstanceOf[Wall]).get
-        hexes(nextHexCoord).contents = hexes(nextHexCoord).contents.filterNot(_.isInstanceOf[Wall])
-        hexes(nextHexCoord).addContent(new WallCracked1())
+        removeFromHex(nextHexCoord._1,nextHexCoord._2, wall)
+//        hexes(nextHexCoord).contents = hexes(nextHexCoord).contents.filterNot(_.isInstanceOf[Wall])
+        hexes(nextHexCoord).addContent(WallCracked1())
       }
       else if (hexes(nextHexCoord).contents.exists(_.isInstanceOf[WallCracked1]))
       {
-        snake.dropRight(1)
-        val crWall = new WallCracked2()
-        hexes(nextHexCoord).contents = hexes(nextHexCoord).contents.filterNot(_.isInstanceOf[WallCracked1])
+        if (tailCoord != headCoord)
+        {
+          val tail = snake.last
+          removeFromHex(tail._1,tail._2, SnakeBody())
+          //          hexes(tail._1,tail._2).contents = hexes(tail._1,tail._2).contents.filterNot(_.isInstanceOf[WallCracked1])
+          snake = snake.dropRight(1)
+        }
+        val crWall = hexes(nextHexCoord).contents.find(_.isInstanceOf[WallCracked1])
+        removeFromHex(nextHexCoord._1, nextHexCoord._2, crWall.get)
         hexes(nextHexCoord).addContent(new WallCracked2)
+
+      }
+      else if (hexes(nextHexCoord).contents.exists(_.isInstanceOf[WallCracked2]))
+      {
+        if (tailCoord != headCoord)
+        {
+          val tail = snake.last
+          removeFromHex(tail._1,tail._2, SnakeBody())
+          snake = snake.dropRight(1)
+        }
+        val cr2Wall = hexes(nextHexCoord).contents.find(_.isInstanceOf[WallCracked2]).get
+        removeFromHex(nextHexCoord._1,nextHexCoord._2,cr2Wall)
 
       }
     }
