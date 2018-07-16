@@ -111,6 +111,14 @@ case class Orange(bonusPts: Integer) extends Fruit
 class Snake
 {
   val chain:mutable.MutableList[SnakeChunk] = new mutable.MutableList[SnakeChunk]()
+}
+trait Enemy extends GameObject
+{
 
-
+}
+case class SpiderCrossed() extends Enemy
+{
+  override val zIndex: Int = 5
+  override val passable: Boolean = false
+  override val spriteFile: String = Config.RESOURCE_PATH + "spider_cross1_28x32.png"
 }

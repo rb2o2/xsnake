@@ -119,14 +119,7 @@ class Stage(width: Int, height: Int)
         removeFromHex(headCoord._1, headCoord._2, SnakeHead())
         snake = snake.dropRight(1)
         snake = nextHexCoord +=: snake
-//        snake = nextHexCoord +=: snake
-//        snake.dropRight(1)
       }
-//      if (tailCoord != headCoord) {
-//        putToHex(headCoord._1, headCoord._2, SnakeBody())
-//        putToHex(nextHexCoord._1, nextHexCoord._2, SnakeHead().withDirection(dir))
-//      }
-//        snake = nextHexCoord +=: snake
       ate -= 1
     }
     else if (hexes.contains(nextHexCoord) && !hexes(nextHexCoord).isPassable) {

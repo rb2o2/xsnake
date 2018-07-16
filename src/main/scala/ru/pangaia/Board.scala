@@ -25,7 +25,7 @@ class Board extends JPanel with ActionListener
     stage.addRoom(12, 14, 4, 4)
     stage.addSimpleSnake((2,(Config.maxZ-1)/2),(1,(Config.maxZ-1)/2),(0,(Config.maxZ-1)/2))
     stage.hexes((19,11)).addContent(GreenApple(100))
-    stage.hexes((21,11)).addContent(Orange(150))
+    stage.hexes((21,11)).addContent(SpiderCrossed())
   }
   init()
   repaint()
