@@ -112,13 +112,22 @@ class Snake
 {
   val chain:mutable.MutableList[SnakeChunk] = new mutable.MutableList[SnakeChunk]()
 }
+
 trait Enemy extends GameObject
 {
-
+  val path: Seq[Int] = Seq()//Int defines direction
 }
-case class SpiderCrossed() extends Enemy
+
+case class SpiderCrossed1(name: String) extends Enemy
 {
   override val zIndex: Int = 5
   override val passable: Boolean = false
   override val spriteFile: String = Config.RESOURCE_PATH + "spider_cross1_28x32.png"
+}
+
+case class SpiderSilkAligned(dir : Int) extends GameObject
+{
+  override val zIndex: Int = 4
+  override val passable: Boolean = false
+  override val spriteFile: String = Config.RESOURCE_PATH + "web" + dir + "_28x32.png"
 }

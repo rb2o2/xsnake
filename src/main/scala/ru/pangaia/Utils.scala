@@ -50,7 +50,7 @@ object Utils
     val z = c1._2
     val so = c2._1
     val zo = c2._2
-    val parity = z%2==0
+    val parity = z % 2==0
     val diff = (s-so,z-zo)
     if (Math.abs(z-zo)>1 || Math.abs(s-so)>1) result = false
     if(parity)
