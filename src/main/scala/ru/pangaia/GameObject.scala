@@ -4,6 +4,7 @@ import java.awt.Image
 import javax.swing.ImageIcon
 
 import scala.collection.mutable
+import scala.util.Random
 
 /**
   * Created by oneuro on 03.02.17.
@@ -22,7 +23,9 @@ case class Floor() extends GameObject
 
   override def toString: String = ". "
 
-  override val spriteFile: String = Config.RESOURCE_PATH  + "floor_28x32.png"
+  val r: Int = new Random().nextInt(3)
+
+  override val spriteFile: String = Config.RESOURCE_PATH  + "floor_" + r + "_28x32.png"
 }
 
 case class Wall() extends GameObject
@@ -122,13 +125,21 @@ trait Enemy extends GameObject
 case class SpiderCrossed1(name: String) extends Enemy
 {
   override val zIndex: Int = 5
+  var direction : Int = Utils.RIGHT
   override val passable: Boolean = false
   override val spriteFile: String = Config.RESOURCE_PATH + "spider_cross1_28x32.png"
+
+  def withDirection(dir: Int): SpiderCrossed1 =
+  {
+    direction = dir
+    this
+  }
+
 }
 
-case class SpiderSilkAligned(dir : Int) extends GameObject
+case class SpiderSilkAligned(dirBegin : Int, dirEnd: Int) extends GameObject
 {
   override val zIndex: Int = 4
   override val passable: Boolean = false
-  override val spriteFile: String = Config.RESOURCE_PATH + "web" + dir + "_28x32.png"
+  override val spriteFile: String = Config.RESOURCE_PATH + "web_" + dirBegin + "_" + dirEnd + "_28x32.png"
 }
