@@ -25,7 +25,12 @@ class Board extends JPanel with ActionListener
     stage.addRoom(12, 14, 4, 4)
     stage.addSimpleSnake((2,(Config.maxZ-1)/2),(1,(Config.maxZ-1)/2),(0,(Config.maxZ-1)/2))
     stage.hexes((19,11)).addContent(GreenApple(100))
-    stage.hexes((21,11)).addContent(SpiderCrossed1("olya"))
+    val spider = SpiderCrossed1("olya")
+    stage.hexes((21,11)).addContent(spider)
+    stage.enemies += "olya" -> spider
+    stage.hexes((21,11)).addContent(SpiderSilkWeb())
+    stage.hexes((22,11)).addContent(SpiderSilkWeb())
+    stage.hexes((23,11)).addContent(SpiderSilkWeb())
     stage.hexes((25,15)).addContent(SpiderSilkWeb())
     stage.hexes((24,15)).addContent(SpiderSilkWeb())
     stage.hexes((25,17)).addContent(SpiderSilkWeb())
@@ -90,7 +95,7 @@ class Board extends JPanel with ActionListener
     val lev = this.stage.level
 
     lev.takeTurn()
-    stage.moveSnake()
+    stage.moveActors()
 //    if (nextLevel)
 //    {
 //      lev.level0+=1

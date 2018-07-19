@@ -1,6 +1,7 @@
 package ru.pangaia
 
 import scala.collection.mutable
+import scala.collection.mutable.ListBuffer
 import scala.util.{Random, Sorting}
 
 /**
@@ -15,6 +16,8 @@ class Stage(width: Int, height: Int)
   var isRectangle = true
   var level: LevellingController = new LevellingController(1)
   var score: Int = 0
+  var enemies: mutable.Map[String, Enemy] = new mutable.HashMap[String,Enemy]()
+  var gameOver = false
 
   def init: Unit =
   {
@@ -81,8 +84,7 @@ class Stage(width: Int, height: Int)
   {
     hexes(snake(0)).contents.find(p=>p.isInstanceOf[SnakeHead]).get.asInstanceOf[SnakeHead]
   }
-
-  def moveSnake(): Unit =
+  def moveSnake() : Unit =
   {
     val tailCoord = snake.last
     val headCoord = snake.head
@@ -133,7 +135,7 @@ class Stage(width: Int, height: Int)
         }
         var wall = hexes(nextHexCoord).contents.find(_.isInstanceOf[Wall]).get
         removeFromHex(nextHexCoord._1,nextHexCoord._2, wall)
-//        hexes(nextHexCoord).contents = hexes(nextHexCoord).contents.filterNot(_.isInstanceOf[Wall])
+        //        hexes(nextHexCoord).contents = hexes(nextHexCoord).contents.filterNot(_.isInstanceOf[Wall])
         hexes(nextHexCoord).addContent(WallCracked1())
       }
       else if (hexes(nextHexCoord).contents.exists(_.isInstanceOf[WallCracked1]))
@@ -163,9 +165,39 @@ class Stage(width: Int, height: Int)
 
       }
     }
+  }
 
+  def moveActors(): Unit =
+  {
+    moveSnake()
+    for {s <- enemies.values} moveEnemy(s)
 
   }
+
+  def moveEnemy(e: Enemy) : Unit =
+  {
+    val b: ListBuffer[(SpiderCrossed1, Hex)] = ListBuffer()
+    var h: Hex = null
+    for (h <- hexes.keySet;
+         c <- hexes(h).contents) {
+      if (c.isInstanceOf[SpiderCrossed1])
+      {
+        b += Tuple2(c.asInstanceOf[SpiderCrossed1], hexes(h))
+
+      }
+    }
+
+    for (a<- b) {
+      a._2.removeContent(a._1)
+      val weblist = for (neightbor <- getHexNeighbors((a._2.x,a._2.y)) if neightbor.contents.contains(SpiderSilkWeb())) yield neightbor
+      val index = Random.nextInt(weblist.size)
+      weblist(index).addContent(a._1)
+    }
+
+  }
+
+
+
   def looseTail() : Unit = {
 
   }
