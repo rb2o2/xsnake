@@ -172,6 +172,7 @@ class Stage(width: Int, height: Int)
     moveSnake()
     for {s <- enemies.values} moveEnemy(s)
 
+
   }
 
   def moveEnemy(e: Enemy) : Unit =
@@ -182,19 +183,19 @@ class Stage(width: Int, height: Int)
          c <- hexes(h).contents) {
       if (c.isInstanceOf[SpiderCrossed1])
       {
-        b += Tuple2(c.asInstanceOf[SpiderCrossed1], hexes(h))
-
+        b += ((c.asInstanceOf[SpiderCrossed1], hexes(h)))
       }
     }
 
-    for (a<- b) {
+    for (a <- b) {
       a._2.removeContent(a._1)
-      val weblist = for (neightbor <- getHexNeighbors((a._2.x,a._2.y)) if neightbor.contents.contains(SpiderSilkWeb())) yield neightbor
+      val weblist = for (neighbor <- getHexNeighbors((a._2.x,a._2.y))
+                         if neighbor.contents.contains(SpiderSilkWeb())) yield neighbor
       val index = Random.nextInt(weblist.size)
       weblist(index).addContent(a._1)
     }
-
   }
+
 
 
 
