@@ -143,3 +143,9 @@ case class SpiderSilkAligned(dirBegin : Int, dirEnd: Int) extends GameObject
   override val passable: Boolean = false
   override val spriteFile: String = Config.RESOURCE_PATH + "web_" + dirBegin + "_" + dirEnd + "_28x32.png"
 }
+case class SpiderSilkWeb() extends GameObject
+{
+  override val zIndex: Int = 4
+  override val passable: Boolean = true
+  override val spriteFile: String = Config.RESOURCE_PATH + "web_circle1_28x32.png"
+}
