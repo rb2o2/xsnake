@@ -96,6 +96,11 @@ class Board extends JPanel with ActionListener
 
     lev.takeTurn()
     stage.moveActors()
+    if (stage.gameOver)
+      {
+        makeGameoverAnimation()
+      }
+    else
 //    if (nextLevel)
 //    {
 //      lev.level0+=1
@@ -105,4 +110,6 @@ class Board extends JPanel with ActionListener
     repaint()
 
   }
+
+  def makeGameoverAnimation(): Unit = {}
 }
