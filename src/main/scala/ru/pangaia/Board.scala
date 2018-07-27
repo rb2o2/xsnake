@@ -2,9 +2,12 @@ package ru.pangaia
 
 import java.awt.{Color, Graphics, Graphics2D, Toolkit}
 import java.awt.event.{ActionEvent, ActionListener, KeyAdapter, KeyEvent}
+import java.util
+import java.util.Collections
 import javax.swing.{ImageIcon, JPanel}
 
-import scala.util.Sorting
+import scala.collection.mutable
+import scala.util.{Random, Sorting}
 
 /**
   * Created by oneuro on 06.02.17.
@@ -13,6 +16,8 @@ class Board extends JPanel with ActionListener
 {
   val stage = new Stage(Config.maxS,Config.maxZ)
   val timer = new AcceleratingTimer(this)
+  val gameoverHexes = Set((Config.maxS/2, Config.maxZ/2),(Config.maxS/2+1, Config.maxZ/2))
+  val hexesClearedForGameOver: mutable.Set[(Int,Int)] = mutable.Set()
 
 
   def init(): Unit =
@@ -55,6 +60,7 @@ class Board extends JPanel with ActionListener
         case KeyEvent.VK_NUMPAD1 => stage.getSnakeHead.direction = Utils.LEFT_LOW
         case KeyEvent.VK_NUMPAD7 => stage.getSnakeHead.direction = Utils.LEFT_HI
         case KeyEvent.VK_NUMPAD4 => stage.getSnakeHead.direction = Utils.LEFT
+        case KeyEvent.VK_G => {stage.gameOver = true; timer.restartWithDelay(100)}
         case _ => ()
       }
     }
@@ -92,24 +98,37 @@ class Board extends JPanel with ActionListener
 
   override def actionPerformed(actionEvent: ActionEvent): Unit =
   {
-    val lev = this.stage.level
+    if (!stage.gameOver)
+    {
+      val lev = this.stage.level
 
-    lev.takeTurn()
-    stage.moveActors()
-    if (stage.gameOver)
-      {
-        makeGameoverAnimation()
-      }
+      lev.takeTurn()
+      stage.moveActors()
+      repaint()
+    }
     else
-//    if (nextLevel)
-//    {
-//      lev.level0+=1
-//      println("level: " + lev.level0)
-//      timer.restartWithDelay(lev.getDelayForLevel(lev.level0))
-//    }
-    repaint()
+    {
+      var hextodrop = (0,0)
+      val hexestodrop = stage.hexes.toList.filter(a =>
+        (!gameoverHexes.contains(a._1) && !hexesClearedForGameOver.contains(a._1))).map(h => h._1)
+      if (hexestodrop.size > 0) {
+        hextodrop = hexestodrop(new Random().nextInt(hexestodrop.size))
+      stage.hexes(hextodrop).contents.foreach(f => if (!f.isInstanceOf[Void]) {stage.hexes(hextodrop).removeContent(f)})
+      hexesClearedForGameOver += hextodrop
+      } else {
+        timer.stop()
+      }
 
+      repaint()
+    }
   }
 
-  def makeGameoverAnimation(): Unit = {}
+//  def makeGameoverAnimation(): Unit = {
+//    timer.stop()
+//    timer.restartWithDelay(20)
+//
+//    stage.hexes.filter(h => !gameoverHexes.contains(h.key))map()
+//
+//    timer.stop()
+//  }
 }
