@@ -60,7 +60,7 @@ class Board extends JPanel with ActionListener
         case KeyEvent.VK_NUMPAD1 => stage.getSnakeHead.direction = Utils.LEFT_LOW
         case KeyEvent.VK_NUMPAD7 => stage.getSnakeHead.direction = Utils.LEFT_HI
         case KeyEvent.VK_NUMPAD4 => stage.getSnakeHead.direction = Utils.LEFT
-        case KeyEvent.VK_G => {stage.gameOver = true; timer.restartWithDelay(100)}
+        case KeyEvent.VK_G => {stage.gameOver = true; timer.restartWithDelay(300)}
         case _ => ()
       }
     }
@@ -108,18 +108,24 @@ class Board extends JPanel with ActionListener
     }
     else
     {
+      val rand = new Random()
       var hextodrop = (0,0)
       val hexestodrop = stage.hexes.toList.filter(a =>
         (!gameoverHexes.contains(a._1) && !hexesClearedForGameOver.contains(a._1))).map(h => h._1)
-      if (hexestodrop.size > 0) {
-        hextodrop = hexestodrop(new Random().nextInt(hexestodrop.size))
-      stage.hexes(hextodrop).contents.foreach(f => if (!f.isInstanceOf[Void]) {stage.hexes(hextodrop).removeContent(f)})
-      hexesClearedForGameOver += hextodrop
+      val iter = rand.shuffle(hexestodrop).grouped(5)
+      if (iter.hasNext)
+      {
+        for {hx <- iter.next()} {
+          stage.hexes(hx).contents.foreach(f => if (!f.isInstanceOf[Void]) {
+            stage.hexes(hx).removeContent(f)
+          })
+          hexesClearedForGameOver += hx
+        }
+        repaint()
+
       } else {
         timer.stop()
       }
-
-      repaint()
     }
   }
 
