@@ -16,7 +16,109 @@ class Board extends JPanel with ActionListener
 {
   val stage = new Stage(Config.maxS,Config.maxZ)
   val timer = new AcceleratingTimer(this)
-  val gameoverHexes = Set((Config.maxS/2, Config.maxZ/2),(Config.maxS/2+1, Config.maxZ/2))
+  val gameoverHexes = {
+    val ms = Config.maxS; val mz = Config.maxZ;
+    Set(
+      (ms/2, mz/2),
+      (ms/2, mz/2-1),
+      (ms/2, mz/2-2),
+      (ms/2, mz/2-3),
+      (ms/2, mz/2+1),
+      (ms/2, mz/2+2),
+      (ms/2, mz/2+3),
+
+      (ms/2+1, mz/2),
+      (ms/2+2, mz/2),
+      (ms/2+3, mz/2),
+
+
+      (ms/2+3, mz/2),
+      (ms/2+4, mz/2-1),
+      (ms/2+3, mz/2-2),
+      (ms/2+4, mz/2-3),
+      (ms/2+4, mz/2+1),
+      (ms/2+3, mz/2+2),
+      (ms/2+4, mz/2+3)
+    ).map(a => (a._1 -2, a._2+1)) ++ Set(
+      (ms/2, mz/2-3),
+      (ms/2, mz/2-2),
+      (ms/2, mz/2-1),
+      (ms/2, mz/2),
+      (ms/2, mz/2+1),
+      (ms/2, mz/2+2),
+      (ms/2, mz/2+3),
+
+      (ms/2+1, mz/2-3),
+      (ms/2+2, mz/2-3),
+      (ms/2+3, mz/2-3),
+      (ms/2+1, mz/2+3),
+      (ms/2+2, mz/2+3),
+      (ms/2+3, mz/2+3),
+      (ms/2+1, mz/2),
+      (ms/2+2, mz/2)
+    ).map(a=> (a._1 + 4, a._2+1)) ++ Set(
+      (ms/2, mz/2-3),
+      (ms/2, mz/2-2),
+      (ms/2, mz/2-1),
+      (ms/2, mz/2),
+      (ms/2, mz/2+1),
+      (ms/2, mz/2+2),
+      (ms/2, mz/2+3),
+
+      (ms/2+4, mz/2-3),
+      (ms/2+3, mz/2-2),
+      (ms/2+4, mz/2-1),
+      (ms/2+3, mz/2),
+      (ms/2+4, mz/2+1),
+      (ms/2+3, mz/2+2),
+      (ms/2+4, mz/2+3),
+
+      (ms/2+1, mz/2+3),
+      (ms/2+2, mz/2+3),
+      (ms/2+3, mz/2+3),
+
+      (ms/2+3, mz/2+5),
+
+      (ms/2+3, mz/2+4)
+    ).map(a => (a._1 + 9, a._2+1)) ++     Set(
+      (ms/2, mz/2),
+      (ms/2, mz/2-1),
+      (ms/2, mz/2-2),
+      (ms/2+1, mz/2-3),
+      (ms/2, mz/2+1),
+      (ms/2, mz/2+2),
+      (ms/2+1, mz/2+3),
+
+      (ms/2+2, mz/2+3),
+      (ms/2+2, mz/2-3),
+
+      (ms/2+3, mz/2),
+      (ms/2+4, mz/2-1),
+      (ms/2+3, mz/2-2),
+      (ms/2+3, mz/2-3),
+      (ms/2+4, mz/2+1),
+      (ms/2+3, mz/2+2),
+      (ms/2+3, mz/2+3)
+    ).map(a => (a._1-8, a._2+1)) ++ Set(
+      (ms/2, mz/2),
+      (ms/2, mz/2-1),
+      (ms/2, mz/2-2),
+      (ms/2, mz/2-3),
+      (ms/2, mz/2+1),
+      (ms/2, mz/2+2),
+      (ms/2, mz/2+3),
+
+      (ms/2+1, mz/2),
+      (ms/2+2, mz/2),
+
+      (ms/2+3, mz/2-1),
+      (ms/2+3, mz/2-2),
+      (ms/2+4, mz/2-3),
+      (ms/2+3, mz/2+1),
+      (ms/2+3, mz/2+2),
+      (ms/2+4, mz/2+3)
+    ).map(a => (a._1 - 14, a._2 + 1))
+  }
   val hexesClearedForGameOver: mutable.Set[(Int,Int)] = mutable.Set()
 
 
@@ -60,7 +162,7 @@ class Board extends JPanel with ActionListener
         case KeyEvent.VK_NUMPAD1 => stage.getSnakeHead.direction = Utils.LEFT_LOW
         case KeyEvent.VK_NUMPAD7 => stage.getSnakeHead.direction = Utils.LEFT_HI
         case KeyEvent.VK_NUMPAD4 => stage.getSnakeHead.direction = Utils.LEFT
-        case KeyEvent.VK_G => {stage.gameOver = true; timer.restartWithDelay(300)}
+        case KeyEvent.VK_G => {stage.gameOver = true; timer.restartWithDelay(100)}
         case _ => ()
       }
     }
@@ -112,7 +214,7 @@ class Board extends JPanel with ActionListener
       var hextodrop = (0,0)
       val hexestodrop = stage.hexes.toList.filter(a =>
         (!gameoverHexes.contains(a._1) && !hexesClearedForGameOver.contains(a._1))).map(h => h._1)
-      val iter = rand.shuffle(hexestodrop).grouped(5)
+      val iter = rand.shuffle(hexestodrop).grouped(25)
       if (iter.hasNext)
       {
         for {hx <- iter.next()} {
