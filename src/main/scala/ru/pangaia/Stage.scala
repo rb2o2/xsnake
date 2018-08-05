@@ -88,6 +88,7 @@ class Stage(width: Int, height: Int)
   {
     val tailCoord = snake.last
     val headCoord = snake.head
+    val onlyHead = tailCoord == headCoord
     val snakeHead = hexes(headCoord).contents.find(p=>p.isInstanceOf[SnakeHead]).get.asInstanceOf[SnakeHead]
     val dir = snakeHead.direction
     val nextHexCoord = Utils.getNeighboringCoords(headCoord,dir)
@@ -132,11 +133,16 @@ class Stage(width: Int, height: Int)
           val tail = snake.last
           removeFromHex(tail._1,tail._2, SnakeBody())
           snake = snake.dropRight(1)
-        }
         var wall = hexes(nextHexCoord).contents.find(_.isInstanceOf[Wall]).get
         removeFromHex(nextHexCoord._1,nextHexCoord._2, wall)
         //        hexes(nextHexCoord).contents = hexes(nextHexCoord).contents.filterNot(_.isInstanceOf[Wall])
         hexes(nextHexCoord).addContent(WallCracked1())
+        }
+        else {
+          removeFromHex(snake.head._1, snake.head._2, SnakeHead())
+          hexes(snake.head).addContent(Bang())
+          endgame()
+        }
       }
       else if (hexes(nextHexCoord).contents.exists(_.isInstanceOf[WallCracked1]))
       {
@@ -146,10 +152,14 @@ class Stage(width: Int, height: Int)
           removeFromHex(tail._1,tail._2, SnakeBody())
           //          hexes(tail._1,tail._2).contents = hexes(tail._1,tail._2).contents.filterNot(_.isInstanceOf[WallCracked1])
           snake = snake.dropRight(1)
-        }
         val crWall = hexes(nextHexCoord).contents.find(_.isInstanceOf[WallCracked1])
         removeFromHex(nextHexCoord._1, nextHexCoord._2, crWall.get)
         hexes(nextHexCoord).addContent(new WallCracked2)
+        } else {
+          removeFromHex(snake.head._1, snake.head._2, SnakeHead())
+          hexes(snake.head).addContent(Bang())
+          endgame()
+        }
 
       }
       else if (hexes(nextHexCoord).contents.exists(_.isInstanceOf[WallCracked2]))
@@ -159,9 +169,13 @@ class Stage(width: Int, height: Int)
           val tail = snake.last
           removeFromHex(tail._1,tail._2, SnakeBody())
           snake = snake.dropRight(1)
-        }
         val cr2Wall = hexes(nextHexCoord).contents.find(_.isInstanceOf[WallCracked2]).get
         removeFromHex(nextHexCoord._1,nextHexCoord._2,cr2Wall)
+        } else {
+          removeFromHex(snake.head._1, snake.head._2, SnakeHead())
+          hexes(snake.head).addContent(Bang())
+          endgame()
+        }
 
       }
     }
@@ -171,9 +185,12 @@ class Stage(width: Int, height: Int)
   {
     moveSnake()
     for {s <- enemies.values} moveEnemy(s)
-
-
   }
+
+  def endgame(): Unit = {
+    gameOver = true
+  }
+
 
   def moveEnemy(e: Enemy) : Unit =
   {

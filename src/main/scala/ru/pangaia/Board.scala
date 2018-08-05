@@ -16,8 +16,8 @@ class Board extends JPanel with ActionListener
 {
   val stage = new Stage(Config.maxS,Config.maxZ)
   val timer = new AcceleratingTimer(this)
-  val gameoverHexes = {
-    val ms = Config.maxS; val mz = Config.maxZ;
+  val gameoverHexes: Set[(Int,Int)] = {
+    val ms = Config.maxS; val mz = Config.maxZ
     Set(
       (ms/2, mz/2),
       (ms/2, mz/2-1),
@@ -31,7 +31,6 @@ class Board extends JPanel with ActionListener
       (ms/2+2, mz/2),
       (ms/2+3, mz/2),
 
-
       (ms/2+3, mz/2),
       (ms/2+4, mz/2-1),
       (ms/2+3, mz/2-2),
@@ -39,6 +38,7 @@ class Board extends JPanel with ActionListener
       (ms/2+4, mz/2+1),
       (ms/2+3, mz/2+2),
       (ms/2+4, mz/2+3)
+
     ).map(a => (a._1 -2, a._2+1)) ++ Set(
       (ms/2, mz/2-3),
       (ms/2, mz/2-2),
@@ -56,6 +56,7 @@ class Board extends JPanel with ActionListener
       (ms/2+3, mz/2+3),
       (ms/2+1, mz/2),
       (ms/2+2, mz/2)
+
     ).map(a=> (a._1 + 4, a._2+1)) ++ Set(
       (ms/2, mz/2-3),
       (ms/2, mz/2-2),
@@ -80,6 +81,7 @@ class Board extends JPanel with ActionListener
       (ms/2+3, mz/2+5),
 
       (ms/2+3, mz/2+4)
+
     ).map(a => (a._1 + 9, a._2+1)) ++     Set(
       (ms/2, mz/2),
       (ms/2, mz/2-1),
@@ -99,6 +101,7 @@ class Board extends JPanel with ActionListener
       (ms/2+4, mz/2+1),
       (ms/2+3, mz/2+2),
       (ms/2+3, mz/2+3)
+
     ).map(a => (a._1-8, a._2+1)) ++ Set(
       (ms/2, mz/2),
       (ms/2, mz/2-1),
@@ -162,9 +165,17 @@ class Board extends JPanel with ActionListener
         case KeyEvent.VK_NUMPAD1 => stage.getSnakeHead.direction = Utils.LEFT_LOW
         case KeyEvent.VK_NUMPAD7 => stage.getSnakeHead.direction = Utils.LEFT_HI
         case KeyEvent.VK_NUMPAD4 => stage.getSnakeHead.direction = Utils.LEFT
-        case KeyEvent.VK_G => {stage.gameOver = true; timer.restartWithDelay(100)}
+        case KeyEvent.VK_G => stage.endgame(); timer.restartWithDelay(100)
         case _ => ()
       }
+    }
+  }
+
+  def endgame(): Unit = {
+    if (!stage.gameOver)
+    {
+      stage.gameOver = true
+      timer.restartWithDelay(100)
     }
   }
 
