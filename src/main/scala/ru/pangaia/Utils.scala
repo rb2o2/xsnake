@@ -106,6 +106,6 @@ object Utils
   def getScreenXY(s:Int,z:Int,imgWidth:Int,imgHeight:Int): (Int,Int) =
   {
     val parity = z%2 == 0
-    return (if (parity) imgWidth/2 + s*imgWidth else s*imgWidth,3*z*imgHeight/4)
+    (if (parity) imgWidth/2 + s*imgWidth else s*imgWidth,3*z*imgHeight/4)
   }
 }

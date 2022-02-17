@@ -7,12 +7,11 @@ import scala.util.{Random, Sorting}
 /**
   * Created by oneuro on 03.02.17.
   */
-class Stage(width: Int, height: Int)
-{
+class Stage(width: Int, height: Int) { 
   type Coord = (Int, Int)
   val hexes: mutable.HashMap[Coord, Hex] = new mutable.HashMap[Coord, Hex]()
-  val rooms: mutable.MutableList[Room] = new mutable.MutableList[Room]()
-  var snake: mutable.MutableList[Coord] = new mutable.MutableList[Coord]()
+  val rooms: mutable.ListBuffer[Room] = new mutable.ListBuffer[Room]()
+  var snake: mutable.ListBuffer[Coord] = new mutable.ListBuffer[Coord]()
   var isRectangle = true
   var level: LevellingController = new LevellingController(1)
   var score: Int = 0
@@ -105,7 +104,7 @@ class Stage(width: Int, height: Int)
         removeFromHex(headCoord._1, headCoord._2, SnakeHead())
         putToHex(headCoord._1, headCoord._2, SnakeBody())
         snake = nextHexCoord +=: snake
-        eatFruit
+        eatFruit()
         ate += 1
       }
       if (nxt.isEmpty && tailCoord != headCoord)

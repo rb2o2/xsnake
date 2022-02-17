@@ -113,7 +113,7 @@ case class Orange(bonusPts: Integer) extends Fruit
 
 class Snake
 {
-  val chain:mutable.MutableList[SnakeChunk] = new mutable.MutableList[SnakeChunk]()
+  val chain:mutable.ListBuffer[SnakeChunk] = new mutable.ListBuffer[SnakeChunk]()
 }
 
 trait Enemy extends GameObject

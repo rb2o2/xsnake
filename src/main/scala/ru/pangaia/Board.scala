@@ -2,12 +2,10 @@ package ru.pangaia
 
 import java.awt.{Color, Graphics, Graphics2D, Toolkit}
 import java.awt.event.{ActionEvent, ActionListener, KeyAdapter, KeyEvent}
-import java.util
-import java.util.Collections
 import javax.swing.{ImageIcon, JPanel}
-
-import scala.collection.mutable
-import scala.util.{Random, Sorting}
+import scala.collection.mutable.*
+import scala.util.Sorting
+import scala.util.Random
 
 /**
   * Created by oneuro on 06.02.17.
@@ -39,7 +37,7 @@ class Board extends JPanel with ActionListener
       (ms/2+3, mz/2+2),
       (ms/2+4, mz/2+3)
 
-    ).map(a => (a._1 -2, a._2+1)) ++ Set(
+    ).map((a1,a2) => (a1 -2, a2+1)) ++ Set(
       (ms/2, mz/2-3),
       (ms/2, mz/2-2),
       (ms/2, mz/2-1),
@@ -57,7 +55,7 @@ class Board extends JPanel with ActionListener
       (ms/2+1, mz/2),
       (ms/2+2, mz/2)
 
-    ).map(a=> (a._1 + 4, a._2+1)) ++ Set(
+    ).map((a1,a2)=> (a1 + 4, a2 + 1)) ++ Set(
       (ms/2, mz/2-3),
       (ms/2, mz/2-2),
       (ms/2, mz/2-1),
@@ -82,7 +80,7 @@ class Board extends JPanel with ActionListener
 
       (ms/2+3, mz/2+4)
 
-    ).map(a => (a._1 + 9, a._2+1)) ++     Set(
+    ).map((a1,a2) => (a1 + 9, a2 + 1)) ++     Set(
       (ms/2, mz/2),
       (ms/2, mz/2-1),
       (ms/2, mz/2-2),
@@ -102,7 +100,7 @@ class Board extends JPanel with ActionListener
       (ms/2+3, mz/2+2),
       (ms/2+3, mz/2+3)
 
-    ).map(a => (a._1-8, a._2+1)) ++ Set(
+    ).map((a1,a2) => (a1 - 8, a2 + 1)) ++ Set(
       (ms/2, mz/2),
       (ms/2, mz/2-1),
       (ms/2, mz/2-2),
@@ -120,9 +118,9 @@ class Board extends JPanel with ActionListener
       (ms/2+3, mz/2+1),
       (ms/2+3, mz/2+2),
       (ms/2+4, mz/2+3)
-    ).map(a => (a._1 - 14, a._2 + 1))
+    ).map((a1,a2) => (a1 - 14, a2 + 1))
   }
-  val hexesClearedForGameOver: mutable.Set[(Int,Int)] = mutable.Set()
+  val hexesClearedForGameOver: collection.mutable.Set[(Int,Int)] = collection.mutable.Set()
 
 
   def init(): Unit =
@@ -192,7 +190,7 @@ class Board extends JPanel with ActionListener
     for ((x,y) <- stage.hexes.keys)
     {
       val hexContents = stage.hexes((x,y)).contents.toArray
-      Sorting.quickSort(hexContents)(Ordering[Int].on(p=>p.zIndex))
+      Sorting.quickSort(hexContents)(Ordering[Int].on((p:GameObject)=>p.zIndex))
 
       for (cont <- hexContents)
       {
@@ -221,7 +219,7 @@ class Board extends JPanel with ActionListener
     }
     else
     {
-      val rand = new Random()
+      val rand = Random()
       var hextodrop = (0,0)
       val hexestodrop = stage.hexes.toList.filter(a =>
         (!gameoverHexes.contains(a._1) && !hexesClearedForGameOver.contains(a._1))).map(h => h._1)

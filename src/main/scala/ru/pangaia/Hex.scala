@@ -26,7 +26,7 @@ case class Hex(x: Int, y: Int) extends PlaneVec
     contents.filter(_.zIndex > 0).forall(i => i.passable)//contains(Floor()) && !contents.contains(SnakeBody()) && !contents.contains(Wall())
   }
 
-  var contents: mutable.MutableList[GameObject] = mutable.MutableList[GameObject](Void())
+  var contents: mutable.ListBuffer[GameObject] = mutable.ListBuffer[GameObject](Void())
 
   override def +(vec: PlaneVec): Hex =
   {
