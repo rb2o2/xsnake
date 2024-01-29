@@ -1,12 +1,7 @@
-import Dependencies._
+organization := "ru.pangaia"
 
-lazy val root = (project in file(".")).
-  settings(
-    inThisBuild(List(
-      organization := "ru.pangaia",
-      scalaVersion := "2.12.1",
-      version      := "0.1.0-SNAPSHOT"
-    )),
-    name := "Hello",
-    libraryDependencies += scalaTest % Test
-  )
+scalaVersion := "3.1.1"
+
+version      := "0.1.0-SNAPSHOT"
+
+name := "xSnake"
