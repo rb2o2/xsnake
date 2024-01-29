@@ -1,7 +1,7 @@
 package ru.pangaia
 
-import java.awt._
-import javax.swing.JFrame
+import java.awt.*
+import javax.swing.{JFrame, WindowConstants}
 
 /**
   * Created by oneuro on 03.02.17.
@@ -15,7 +15,7 @@ class GameFrame extends JFrame
     setResizable(false)
 
     setTitle("Xnake v.0.1")
-    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE)
+    setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE)
   }
 
   initUI()
