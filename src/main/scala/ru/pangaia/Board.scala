@@ -1,12 +1,11 @@
 package ru.pangaia
 
-import java.awt.{Color, Graphics, Graphics2D, Toolkit}
 import java.awt.event.{ActionEvent, ActionListener, KeyAdapter, KeyEvent}
+import java.awt.{Color, Graphics, Graphics2D, Toolkit}
 import javax.swing.{ImageIcon, JPanel}
 import scala.collection.mutable
 import scala.collection.mutable.Set
-import scala.util.Sorting
-import scala.util.Random
+import scala.util.{Random, Sorting}
 
 /**
   * Created by oneuro on 06.02.17.
@@ -127,7 +126,7 @@ class Board extends JPanel with ActionListener :
     setBackground(Color.BLACK)
     setFocusable(true)
     addKeyListener(new KAdapter())
-    stage.init()
+    stage.init
     stage.addRoom(2, 6, 8, 6)
     stage.addRoom(12, 14, 4, 4)
     stage.addSimpleSnake((2,(Config.maxZ-1)/2),(1,(Config.maxZ-1)/2),(0,(Config.maxZ-1)/2))

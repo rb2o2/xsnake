@@ -7,7 +7,8 @@ import scala.util.{Random, Sorting}
 /**
   * Created by oneuro on 03.02.17.
   */
-class Stage(width: Int, height: Int) :
+class Stage(width: Int, height: Int)
+{
   type Coord = (Int, Int)
   val hexes: mutable.HashMap[Coord, Hex] = new mutable.HashMap[Coord, Hex]()
   val rooms: mutable.ListBuffer[Room] = new mutable.ListBuffer[Room]()
@@ -18,25 +19,34 @@ class Stage(width: Int, height: Int) :
   var enemies: mutable.Map[String, Enemy] = new mutable.HashMap[String,Enemy]()
   var gameOver = false
 
-  def init(): Unit =
+  def init: Unit =
+  {
     for (x <- Range(0, width);
          y <- Range(0, height))
     {
       putToHex(x, y, Void())
       putToHex(x, y, Floor())
     }
+  }
 
   def getHexNeighbors(coords: Coord): List[Hex] =
+  {
     hexes.values.filter(h => Utils.isNeighborTo((h.x, h.y), coords)).toList
+  }
 
   def removeFromHex(x: Int, y: Int, obj: GameObject): Unit =
+  {
     hexes.getOrElse((x, y), Hex(x, y)).removeContent(obj)
+  }
 
   def putToHex(x: Int, y: Int, obj: GameObject): Unit =
+  {
     val old: Hex = hexes.get(x, y).getOrElse(Hex(x, y))
     hexes.put((x, y), old.addContent(obj))
+  }
 
   def addSimpleSnake(bodyCoords: Coord*): Unit =
+  {
     if (snake.nonEmpty)
     {
       throw new RuntimeException("snake already on stage")
@@ -55,32 +65,36 @@ class Stage(width: Int, height: Int) :
       prev = c
       addSnakeBody(c)
     }
+  }
 
   def addSnakeHead(c: Coord): Unit =
+  {
     putToHex(c._1, c._2, SnakeHead())
     snake +== c
+  }
 
   def addSnakeBody(c: Coord): Unit =
+  {
     if (snake.isEmpty) throw new RuntimeException("must push head first")
     snake +== c
     putToHex(c._1, c._2, SnakeBody())
+  }
 
   def getSnakeHead: SnakeHead =
     hexes(snake.head).contents.find(p=>p.isInstanceOf[SnakeHead]).get.asInstanceOf[SnakeHead]
 
-  def moveSnake() : Unit =
+  def moveSnake() : Unit = {
     val tailCoord = snake.last
     val headCoord = snake.head
     val onlyHead = tailCoord == headCoord
-    val snakeHead = hexes(headCoord).contents.find(p=>p.isInstanceOf[SnakeHead]).get.asInstanceOf[SnakeHead]
+    val snakeHead = hexes(headCoord).contents.find(p => p.isInstanceOf[SnakeHead]).get.asInstanceOf[SnakeHead]
     val dir = snakeHead.direction
-    val nextHexCoord = Utils.getNeighboringCoords(headCoord,dir)
-    if (hexes.keySet.contains(nextHexCoord) && hexes(nextHexCoord).isPassable)
-    {
+    val nextHexCoord = Utils.getNeighboringCoords(headCoord, dir)
+    val tail = hexes(tailCoord)
+    if (hexes.keySet.contains(nextHexCoord) && hexes(nextHexCoord).isPassable) {
       val nxt = hexes(nextHexCoord).contents.filter(_.isInstanceOf[Fruit]).toList
       var ate = 0
-      if (nxt.nonEmpty)
-      {
+      if (nxt.nonEmpty) {
         this.score += nxt.head.asInstanceOf[Fruit].bonusPts
         println(score)
         removeFromHex(nextHexCoord._1, nextHexCoord._2, nxt.head.asInstanceOf[Fruit])
@@ -91,16 +105,14 @@ class Stage(width: Int, height: Int) :
         eatFruit()
         ate += 1
       }
-      if (nxt.isEmpty && tailCoord != headCoord)
-      {
+      if (nxt.isEmpty && tailCoord != headCoord) {
         removeFromHex(tailCoord._1, tailCoord._2, SnakeBody())
         snake = snake.dropRight(1)
         removeFromHex(headCoord._1, headCoord._2, SnakeHead())
         putToHex(headCoord._1, headCoord._2, SnakeBody())
         putToHex(nextHexCoord._1, nextHexCoord._2, SnakeHead().withDirection(dir))
         snake = nextHexCoord +=: snake
-      } else if (tailCoord == headCoord && nxt.isEmpty)
-      {
+      } else if (tailCoord == headCoord && nxt.isEmpty) {
         putToHex(nextHexCoord._1, nextHexCoord._2, SnakeHead().withDirection(dir))
         removeFromHex(headCoord._1, headCoord._2, SnakeHead())
         snake = snake.dropRight(1)
@@ -109,16 +121,14 @@ class Stage(width: Int, height: Int) :
       ate -= 1
     }
     else if (hexes.contains(nextHexCoord) && !hexes(nextHexCoord).isPassable) {
-      if (hexes(nextHexCoord).contents.exists(_.isInstanceOf[Wall]))
-      {
-        if (tailCoord != headCoord)
-        {
+      if (hexes(nextHexCoord).contents.exists(_.isInstanceOf[Wall])) {
+        if (tailCoord != headCoord) {
           val tail = snake.last
-          removeFromHex(tail._1,tail._2, SnakeBody())
+          removeFromHex(tail._1, tail._2, SnakeBody())
           snake = snake.dropRight(1)
           var wall = hexes(nextHexCoord).contents.find(_.isInstanceOf[Wall]).get
-          removeFromHex(nextHexCoord._1,nextHexCoord._2, wall)
-        //        hexes(nextHexCoord).contents = hexes(nextHexCoord).contents.filterNot(_.isInstanceOf[Wall])
+          removeFromHex(nextHexCoord._1, nextHexCoord._2, wall)
+          //        hexes(nextHexCoord).contents = hexes(nextHexCoord).contents.filterNot(_.isInstanceOf[Wall])
           hexes(nextHexCoord).addContent(WallCracked1())
         }
         else {
@@ -127,12 +137,10 @@ class Stage(width: Int, height: Int) :
           endgame()
         }
       }
-      else if (hexes(nextHexCoord).contents.exists(_.isInstanceOf[WallCracked1]))
-      {
-        if (tailCoord != headCoord)
-        {
+      else if (hexes(nextHexCoord).contents.exists(_.isInstanceOf[WallCracked1])) {
+        if (tailCoord != headCoord) {
           val tail = snake.last
-          removeFromHex(tail._1,tail._2, SnakeBody())
+          removeFromHex(tail._1, tail._2, SnakeBody())
           //          hexes(tail._1,tail._2).contents = hexes(tail._1,tail._2).contents.filterNot(_.isInstanceOf[WallCracked1])
           snake = snake.dropRight(1)
           val crWall = hexes(nextHexCoord).contents.find(_.isInstanceOf[WallCracked1])
@@ -145,15 +153,13 @@ class Stage(width: Int, height: Int) :
         }
 
       }
-      else if (hexes(nextHexCoord).contents.exists(_.isInstanceOf[WallCracked2]))
-      {
-        if (tailCoord != headCoord)
-        {
+      else if (hexes(nextHexCoord).contents.exists(_.isInstanceOf[WallCracked2])) {
+        if (tailCoord != headCoord) {
           val tail = snake.last
-          removeFromHex(tail._1,tail._2, SnakeBody())
+          removeFromHex(tail._1, tail._2, SnakeBody())
           snake = snake.dropRight(1)
           val cr2Wall = hexes(nextHexCoord).contents.find(_.isInstanceOf[WallCracked2]).get
-          removeFromHex(nextHexCoord._1,nextHexCoord._2,cr2Wall)
+          removeFromHex(nextHexCoord._1, nextHexCoord._2, cr2Wall)
         } else {
           removeFromHex(snake.head._1, snake.head._2, SnakeHead())
           hexes(snake.head).addContent(Bang())
@@ -162,6 +168,7 @@ class Stage(width: Int, height: Int) :
 
       }
     }
+  }
 
   def moveActors(): Unit =
     moveSnake()
@@ -178,6 +185,7 @@ class Stage(width: Int, height: Int) :
       c match
       {
         case cc:SpiderCrossed1 => b += ((cc, hexes(h)))
+        case _ => ()
       }
     }
 
@@ -203,13 +211,17 @@ class Stage(width: Int, height: Int) :
     putToHex(s,z,bonus)
 
   def addRoom(top: Int, left: Int, width: Int, height: Int): Unit =
+  {
     for (x <- Range(left, left + width + 1);
          y <- Range(top, top + height + 1)) putToHex(x, y, Floor())
 
     surroundByWalls(left, left + width + 1, top, top + height + 1)
     rooms += Room(top, left, width, height)
 
+  }
+
   def surroundByWalls(minS: Int, maxS: Int, minZ: Int, maxZ: Int): Unit =
+  {
     for (x <- Range(minS, maxS + 1))
     {
       putToHex(x, minZ, Wall())
@@ -220,8 +232,10 @@ class Stage(width: Int, height: Int) :
       putToHex(minS, y, Wall())
       putToHex(maxS, y, Wall())
     }
+  }
 
   override def toString: String =
+  {
     var seq = hexes.keys.toArray
     Sorting.quickSort(seq)(Ordering[(Int, Int)].on(p => (p._2, p._1)))
     var out: mutable.StringBuilder = new mutable.StringBuilder()
@@ -234,35 +248,45 @@ class Stage(width: Int, height: Int) :
         parity = !parity
         out.append(if (parity) "\n " else "\n")
       }
-      out.append(hexes(h).contents.maxBy(x => x.zIndex).toString)
+      out.append(hexes(h).contents.maxBy(x => x.zIndex).toString())
       prev = h._2
     }
     out.append("\n")
     out.toString()
+  }
+}
 
-class LevellingController(l: Int) :
+class LevellingController(l: Int)
+{
   var level0: Int = l
   var turnIndex: Int = 0
   var levelDuration: Int = Config.LEVEL0_DURATION
 
   val levelBoundaries: Seq[Int] =
+  {
     LazyList.from(1).map(p =>p*p*Config.LEVEL0_DURATION / Config.INITIAL_TIMER_DELAY)
       .take(30)
       .toList
+  }
 
   def nextLevel: Boolean =
+  {
     levelBoundaries.contains(turnIndex)
-    //    turnIndex % 100 == 0
+  }
 
   def takeTurn(): Unit =
+  {
     turnIndex += 1
+  }
 
   def getDelayForLevel(l: Int): Int =
+  {
     if (Config.INITIAL_TIMER_DELAY / l >= Config.MIN_TIMER_DELAY)
     {
       Config.INITIAL_TIMER_DELAY/l
     }
     else Config.MIN_TIMER_DELAY
-    //    500
+  }
+}
 
 case class Room(top: Int, left: Int, width: Int, height: Int)
