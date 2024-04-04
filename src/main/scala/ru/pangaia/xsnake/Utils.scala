@@ -1,31 +1,4 @@
-package ru.pangaia
-
-import java.awt.event.ActionListener
-import javax.swing.Timer
-
-object Config :
-  val maxS = 36
-  val maxZ = 30
-  val WIDTH = 1024
-  val HEIGHT = 800
-  val RESOURCE_PATH = "src/main/resources/"
-  val INITIAL_TIMER_DELAY = 500
-  val MIN_TIMER_DELAY = 30
-  val LEVEL0_DURATION = 10000
-
-class AcceleratingTimer(actionListener: ActionListener) :
-  var delay: Int = Config.INITIAL_TIMER_DELAY
-  var timer: Timer = new Timer(delay, actionListener)
-
-  def restartWithDelay(delay: Int): Unit =
-    this.delay = delay
-    stop()
-    timer.removeActionListener(actionListener)
-    timer = new Timer(this.delay,actionListener)
-    start()
-
-  def start() : Unit = {timer.start()}
-  def stop() : Unit = {timer.stop()}
+package ru.pangaia.xsnake
 
 object Utils :
   val RIGHT = 6

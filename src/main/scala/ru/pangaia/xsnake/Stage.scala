@@ -1,4 +1,6 @@
-package ru.pangaia
+package ru.pangaia.xsnake
+
+import ru.pangaia.xsnake.objects.*
 
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
@@ -7,8 +9,7 @@ import scala.util.{Random, Sorting}
 /**
   * Created by oneuro on 03.02.17.
   */
-class Stage(width: Int, height: Int)
-{
+class Stage(width: Int, height: Int) :
   type Coord = (Int, Int)
   val hexes: mutable.HashMap[Coord, Hex] = new mutable.HashMap[Coord, Hex]()
   val rooms: mutable.ListBuffer[Room] = new mutable.ListBuffer[Room]()
@@ -254,39 +255,3 @@ class Stage(width: Int, height: Int)
     out.append("\n")
     out.toString()
   }
-}
-
-class LevellingController(l: Int)
-{
-  var level0: Int = l
-  var turnIndex: Int = 0
-  var levelDuration: Int = Config.LEVEL0_DURATION
-
-  val levelBoundaries: Seq[Int] =
-  {
-    LazyList.from(1).map(p =>p*p*Config.LEVEL0_DURATION / Config.INITIAL_TIMER_DELAY)
-      .take(30)
-      .toList
-  }
-
-  def nextLevel: Boolean =
-  {
-    levelBoundaries.contains(turnIndex)
-  }
-
-  def takeTurn(): Unit =
-  {
-    turnIndex += 1
-  }
-
-  def getDelayForLevel(l: Int): Int =
-  {
-    if (Config.INITIAL_TIMER_DELAY / l >= Config.MIN_TIMER_DELAY)
-    {
-      Config.INITIAL_TIMER_DELAY/l
-    }
-    else Config.MIN_TIMER_DELAY
-  }
-}
-
-case class Room(top: Int, left: Int, width: Int, height: Int)

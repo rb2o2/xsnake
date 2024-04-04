@@ -1,18 +1,12 @@
-package ru.pangaia
+package ru.pangaia.xsnake
+
+import ru.pangaia.xsnake.objects.{GameObject, Void}
 
 import scala.collection.mutable
 
 /**
   * Created by oneuro on 03.02.17.
   */
-trait PlaneVec :
-  def x: Int
-  def y: Int
-  def +(vec: PlaneVec): PlaneVec
-
-case class VectorImpl(x: Int, y: Int) extends PlaneVec :
-  override def +(vec: PlaneVec): PlaneVec = VectorImpl(x + vec.x, y + vec.y)
-
 case class Hex(x: Int, y: Int) extends PlaneVec :
   def isPassable: Boolean =
     contents.filter(_.zIndex > 0).forall(i => i.passable)//contains(Floor()) && !contents.contains(SnakeBody()) && !contents.contains(Wall())
